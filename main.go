@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"go/build"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 )
@@ -62,6 +65,38 @@ func main() {
 
 	e.GET("/photo", func(c echo.Context) error {
 		return c.File("image1.jpg")
+	})
+
+	e.POST("/photo", func(c echo.Context) error {
+		file, err := c.FormFile("image")
+
+		src, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		// // Destination
+		// ex, err := os.Executable()
+		// if err != nil {
+		// 	panic(err)
+		// }
+		gopath := os.Getenv("GOPATH")
+		if gopath == "" {
+			gopath = build.Default.GOPATH
+		}
+		dst, err := os.Create(gopath + "/" + file.Filename)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		// Copy
+		if _, err = io.Copy(dst, src); err != nil {
+			return err
+		}
+
+		return c.File(gopath + "/" + file.Filename)
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

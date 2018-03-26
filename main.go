@@ -23,8 +23,34 @@ func main() {
 			proxyHeaders[k] = v[0]
 		}
 
+		requestBody := map[string]string{}
+		requestBody["name"] = c.FormValue("BODY")
+
 		return c.JSON(http.StatusOK, map[string]string{
 			"data": "SIP TENAN",
+		})
+		// return c.JSON(http.StatusOK, events.APIGatewayProxyResponse{
+		// 	StatusCode:      http.StatusOK,
+		// 	Headers:         proxyHeaders,
+		// 	Body:            map[string],
+		// 	IsBase64Encoded: false,
+		// })
+	})
+
+	e.POST("/hello/:id", func(c echo.Context) error {
+		proxyHeaders := make(map[string]string)
+
+		for k, v := range c.Request().Header {
+			proxyHeaders[k] = v[0]
+		}
+
+		body := map[string]string{}
+		body["name"] = c.FormValue("name")
+		body["id"] = c.Param("id")
+		body["limit"] = c.QueryParam("limit")
+
+		return c.JSON(http.StatusOK, map[string]map[string]string{
+			"data": body,
 		})
 		// return c.JSON(http.StatusOK, events.APIGatewayProxyResponse{
 		// 	StatusCode:      http.StatusOK,

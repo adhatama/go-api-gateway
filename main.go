@@ -1,12 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-
-	"github.com/aws/aws-lambda-go/events"
 
 	"github.com/labstack/echo"
 )
@@ -27,19 +23,15 @@ func main() {
 			proxyHeaders[k] = v[0]
 		}
 
-		// Request
-		reqBody := []byte{}
-		if c.Request().Body != nil { // Read
-			reqBody, _ = ioutil.ReadAll(c.Request().Body)
-		}
-		c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(reqBody)) // Reset
-
-		return c.JSON(http.StatusOK, events.APIGatewayProxyResponse{
-			StatusCode:      http.StatusOK,
-			Headers:         proxyHeaders,
-			Body:            "HELLO WORLD",
-			IsBase64Encoded: false,
+		return c.JSON(http.StatusOK, map[string]string{
+			"data": "SIP TENAN",
 		})
+		// return c.JSON(http.StatusOK, events.APIGatewayProxyResponse{
+		// 	StatusCode:      http.StatusOK,
+		// 	Headers:         proxyHeaders,
+		// 	Body:            map[string],
+		// 	IsBase64Encoded: false,
+		// })
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

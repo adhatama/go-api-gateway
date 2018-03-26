@@ -60,6 +60,10 @@ func main() {
 		// })
 	})
 
+	e.GET("/photo", func(c echo.Context) error {
+		return c.File("image1.jpg")
+	})
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
